@@ -1,0 +1,77 @@
+name: frontend-pipeline nextjs workflow
+
+on:
+  push:
+    branches:
+      - master
+      - main 
+      - release/*
+    paths-ignore:
+      - '**/README.md'
+      - '**/*.md'
+      - '**/*.txt'
+      - '**/*.log'
+      - '**/.gitignore'
+      - '**/.dockerignore'
+      - '**/LICENSE'
+      - '**/*.lock'
+  pull_request:
+    branches:
+      - master
+      - main 
+      - release/*
+  workflow_dispatch:
+    inputs:
+      ask_for_approval:
+        description: "Do you want to proceed with the deployment?"
+        required: true
+        default: "no"
+        type: choice 
+        options:
+          - "yes"
+          - "no"
+
+jobs:
+  deploy_front:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Node.js (verify if not installed)
+        run: |
+          if ! command -v node &> /dev/null; then
+            curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+            sudo apt install -y nodejs
+          fi
+          echo "Node.js version: $(node -v)"
+          echo "npm version: $(npm -v)"
+
+      - name: Install PM2 globally (verify if not installed)
+        run: |
+          if ! command -v pm2 &> /dev/null; then
+            sudo npm install -g pm2
+          fi
+
+      - name: Create environment variables file
+        run: |
+          echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
+          echo "NEXT_PUBLIC_OTHER_ENV=${{ secrets.NEXT_PUBLIC_OTHER_ENV }}" >> .env
+          echo "NEXT_PUBLIC_SOCKET_URL=${{ secrets.NEXT_PUBLIC_SOCKET_URL }}" >> .env
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Install sharp
+        run: npm install sharp --legacy-peer-deps
+
+      - name: Build Next.js application
+        run: npm run build
+
+      - name: Clear existing PM2 processes
+        run: pm2 delete frontend-app || true
+
+      - name: Start app with PM2
+        run: |
+          pm2 start npm --name "frontend-app" -- start
+          pm2 save
