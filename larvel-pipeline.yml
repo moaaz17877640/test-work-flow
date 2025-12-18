@@ -1,0 +1,31 @@
+name : backend-laravel-deployment-pipeline
+on : 
+  push : 
+    branches : 
+      - main
+      - release/*
+    paths-ignore : 
+      - '**/README.md'
+      - '**/*.md'
+      - '**/*.txt'
+      - '**/*.log'
+      - '**/.gitignore'
+      - '**/.dockerignore'
+      - '**/LICENSE'
+      - '**/*.lock'
+  pull_request : 
+    branches : 
+      - main
+      - release/*
+  workflow_dispatch :
+    inputs :
+      ask_for_approval :
+        description : "Do you want to proceed with the deployment?"
+        required : true
+        default : "no"
+        type : choice
+        options :   
+          - "yes"
+          - "no" 
+jobs : 
+  runs-on: ubuntu-latest
