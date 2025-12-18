@@ -13301,7 +13301,7 @@ Life.getInitialProps = /*#__PURE__*/function () {
 
 /***/ }),
 
-/***/ 7:
+/***/ 5:
 /*!***********************************!*\
   !*** multi ./pages/life/index.js ***!
   \***********************************/
@@ -13326,5 +13326,5 @@ module.exports = dll_e21296ef0094940af1b6;
 
 /***/ })
 
-},[[7,"static/runtime/webpack.js"]]]));;
+},[[5,"static/runtime/webpack.js"]]]));;
 //# sourceMappingURL=life.js.map
