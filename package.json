@@ -75,10 +75,10 @@
     "redux-devtools-extension": "^2.13.7"
   },
   "scripts": {
-    "test": "node scripts/test.js --env=jsdom",
-    "dev": "cross-env NODE_ENV=development node server.js",
-    "build": "next build",
-    "start": "cross-env NODE_ENV=production node server.js",
-    "prod": "next build && pm2 start ecosystem.config.js --only prod-front --watch"
+    "test": "jest --env=jsdom",
+    "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider NODE_ENV=development node server.js",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider next build",
+    "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider NODE_ENV=production node server.js",
+    "prod": "cross-env NODE_OPTIONS=--openssl-legacy-provider next build && pm2 start ecosystem.config.js --only prod-front --watch"
   }
 }
